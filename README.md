@@ -1,4 +1,4 @@
-# GPA-02
+# carkus-backend
 
 ## API Endpoints
 
