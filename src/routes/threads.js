@@ -10,8 +10,8 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 export const threads = Router();
 
-threads.get("/", getThreads);
-threads.get("/:threadId", getThreadById);
-threads.post("/", authMiddleware, addThread);
-threads.put("/:threadId", authMiddleware, updateThreadById);
-threads.delete("/:threadId", authMiddleware, deleteThreadById);
+threads.get("/:campusId/threads/", getThreads);
+threads.get("/:campusId/threads/:threadId", getThreadById);
+threads.post("/:campusId/threads/", authMiddleware, addThread);
+threads.put("/:campusId/threads/:threadId", authMiddleware, updateThreadById);
+threads.delete("/:campusId/threads/:threadId", authMiddleware, deleteThreadById);
