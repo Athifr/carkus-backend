@@ -1,9 +1,7 @@
 import express from "express";
 import ClientError from "./commons/exceptions/ClientError.js";
 import { auth } from "./routes/auth.js";
-import { campuses } from "./routes/campuses.js";
-import { comments } from "./routes/comments.js";
-import { threads } from "./routes/threads.js";
+import { campus } from "./routes/campus.js";
 import { users } from "./routes/users.js";
 
 export const app = express();
@@ -11,10 +9,8 @@ export const app = express();
 app.use(express.json());
 
 app.use("/auth", auth);
-app.use("/campuses", campuses);
+app.use("/campus", campus);
 app.use("/users", users);
-app.use("/campuses", threads);
-app.use("/campuses", comments);
 
 app.use((err, req, res, next) => {
   if (err instanceof ClientError) {
