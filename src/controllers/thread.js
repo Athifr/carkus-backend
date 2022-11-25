@@ -1,6 +1,5 @@
 import AuthorizationError from "../commons/exceptions/AuthorizationError.js";
 import NotFoundError from "../commons/exceptions/NotFoundError.js";
-import { Thread } from "../models/Thread.js";
 import { Campus } from "../models/Campus.js";
 
 /** @type {import("express").RequestHandler} */
@@ -31,10 +30,10 @@ export async function addThread(req, res, next) {
 /** @type {import("express").RequestHandler} */
 export async function getThreads(req, res, next) {
   try {
-    const { campusId } = req.body;
+    const { campusId } = req.params;
     const campus = await Campus.findById(campusId);
     if (!campus) {
-      throw new NotFoundError("Campus not found")
+      throw new NotFoundError("Campus not found");
     }
 
     res.status(200).json(campus.threads);
@@ -68,7 +67,7 @@ export async function updateThreadById(req, res, next) {
   try {
     const { userId } = res.locals.token;
     const { campusId, threadId } = req.params;
-    const { content } = req.body;
+    const { title, content } = req.body;
 
     const campus = await Campus.findById(campusId);
     if (!campus) {
@@ -111,7 +110,7 @@ export async function deleteThreadById(req, res, next) {
       throw new NotFoundError("Thread not found");
     }
 
-    if (campus.author.toString() !== userId) {
+    if (thread.author.toString() !== userId) {
       throw new AuthorizationError("Restricted resource");
     }
 

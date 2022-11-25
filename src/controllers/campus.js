@@ -24,3 +24,20 @@ export async function getCampusById(req, res, next) {
     next(err);
   }
 }
+
+/** @type{import("express").RequestHandler} */
+export async function addCampus(req, res, next) {
+  try {
+    const { name, address, description, accreditation, imageUrl } = req.body;
+    const campus = await Campus.create({
+      name,
+      address,
+      description,
+      accreditation,
+      imageUrl,
+    });
+    res.status(201).json(campus);
+  } catch (err) {
+    next(err);
+  }
+}

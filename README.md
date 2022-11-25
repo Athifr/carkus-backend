@@ -6,8 +6,8 @@
 | ------ | ------------------------- | ----------------------------- | ----------------------- |
 | POST   | /auth/login               | Login                         |                         |
 | POST   | /auth/register            | Register                      |                         |
-| GET    | /campuses                 | Get all campuses              |                         |
-| GET    | /campuses/:id             | Get a campus by id            |                         |
+| GET    | /campus                   | Get all campuses              |                         |
+| GET    | /campus/:id               | Get a campus by id            |                         |
 | GET    | /threads                  | Get all threads               |                         |
 | GET    | /threads/:id              | Get a thread by id            |                         |
 | POST   | /threads                  | Create a thread               | Requires Authentication |
