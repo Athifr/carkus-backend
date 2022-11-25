@@ -1,11 +1,18 @@
 import AuthorizationError from "../commons/exceptions/AuthorizationError.js";
 import NotFoundError from "../commons/exceptions/NotFoundError.js";
-import { Thread } from "../models/Thread.js";
+import { Campus } from "../models/Campus.js";
 
 /** @type {import("express").RequestHandler} */
 export async function getComments(req, res, next) {
   try {
-    const thread = await Thread.findById(req.params.threadId);
+    const { campusId, threadId } = req.params;
+
+    const campus = await Campus.findById(campusId);
+    if (!campus) {
+      throw new NotFoundError("Campus not found");
+    }
+
+    const thread = campus.threads.id(threadId);
     if (!thread) {
       throw new NotFoundError("Thread not found");
     }
@@ -19,12 +26,19 @@ export async function getComments(req, res, next) {
 /** @type {import("express").RequestHandler} */
 export async function getCommentById(req, res, next) {
   try {
-    const thread = await Thread.findById(req.params.threadId);
+    const { campusId, threadId, commentId } = req.params;
+
+    const campus = await Campus.findById(campusId);
+    if (!campus) {
+      throw new NotFoundError("Campus not found");
+    }
+
+    const thread = campus.threads.id(threadId);
     if (!thread) {
       throw new NotFoundError("Thread not found");
     }
 
-    const comment = thread.comments.id(req.params.commentId);
+    const comment = thread.comments.id(commentId);
     if (!comment) {
       throw new NotFoundError("Comment not found");
     }
@@ -39,19 +53,24 @@ export async function getCommentById(req, res, next) {
 export async function addComment(req, res, next) {
   try {
     const { userId } = res.locals.token;
-    const { threadId } = req.params;
+    const { campusId, threadId } = req.params;
     const { content } = req.body;
 
-    const thread = await Thread.findById(threadId);
+    const campus = await Campus.findById(campusId);
+    if (!campus) {
+      throw new NotFoundError("Campus not found");
+    }
+
+    const thread = campus.threads.id(threadId);
     if (!thread) {
-      throw new NotFoundError("thread not found");
+      throw new NotFoundError("Thread not found");
     }
 
     thread.comments.push({
       author: userId,
       content,
     });
-    await thread.save();
+    await campus.save();
     res.status(201).json(thread.comments.at(-1));
   } catch (err) {
     next(err);
@@ -62,25 +81,30 @@ export async function addComment(req, res, next) {
 export async function updateCommentById(req, res, next) {
   try {
     const { userId } = res.locals.token;
-    const { threadId, commentId } = req.params;
+    const { campusId, threadId, commentId } = req.params;
     const { content } = req.body;
 
-    const thread = await Thread.findById(threadId);
+    const campus = await Campus.findById(campusId);
+    if (!campus) {
+      throw new NotFoundError("Campus not found");
+    }
+
+    const thread = campus.threads.id(threadId);
     if (!thread) {
-      throw new NotFoundError("thread not found");
+      throw new NotFoundError("Thread not found");
     }
 
     const comment = thread.comments.id(commentId);
     if (!comment) {
-      throw new NotFoundError("comment not found");
+      throw new NotFoundError("Comment not found");
     }
 
     if (comment.author.toString() !== userId) {
-      throw new AuthorizationError("restricted resource");
+      throw new AuthorizationError("Restricted resource");
     }
 
     comment.content = content;
-    await thread.save();
+    await campus.save();
     res.status(200).json({
       message: "success",
     });
@@ -93,24 +117,29 @@ export async function updateCommentById(req, res, next) {
 export async function deleteCommentById(req, res, next) {
   try {
     const { userId } = res.locals.token;
-    const { threadId, commentId } = req.params;
+    const { campusId, threadId, commentId } = req.params;
 
-    const thread = await Thread.findById(threadId);
+    const campus = await Campus.findById(campusId);
+    if (!campus) {
+      throw new NotFoundError("Campus not found");
+    }
+
+    const thread = campus.threads.id(threadId);
     if (!thread) {
-      throw new NotFoundError("thread not found");
+      throw new NotFoundError("Thread not found");
     }
 
     const comment = thread.comments.id(commentId);
     if (!comment) {
-      throw new NotFoundError("comment not found");
+      throw new NotFoundError("Comment not found");
     }
 
     if (thread.author.toString() !== userId) {
-      throw new AuthorizationError("restricted resource");
+      throw new AuthorizationError("Restricted resource");
     }
 
     comment.remove();
-    await thread.save();
+    await campus.save();
     res.status(200).json({
       message: "success",
     });
