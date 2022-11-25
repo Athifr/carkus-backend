@@ -1,4 +1,5 @@
 import { model, Schema } from "mongoose";
+import { Thread } from "./Thread.js";
 
 const campusSchema = new Schema({
   name: {
@@ -29,6 +30,7 @@ const campusSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+  threads: [Thread.schema],
 });
 
 export const Campus = model("Campus", campusSchema);

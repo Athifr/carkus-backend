@@ -11,8 +11,8 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 export const comments = Router();
 
 comments
-  .get("/:threadId/comments", getComments)
-  .get("/:threadId/comments/:commentId", getCommentById)
-  .post("/:threadId/comments", authMiddleware, addComment)
-  .put("/:threadId/comments/:commentId", authMiddleware, updateCommentById)
-  .delete("/:threadId/comments/:commentId", authMiddleware, deleteCommentById);
+  .get("/campuses/:campusId/threads/:threadId/comments", getComments)
+  .get("/campuses/:campusId/threads/:threadId/comments/:commentId", getCommentById)
+  .post("/campuses/:campusId/threads/:threadId/comments", authMiddleware, addComment)
+  .put("/campuses/:campusId/threads/:threadId/comments/:commentId", authMiddleware, updateCommentById)
+  .delete("/campuses/:campusId/threads/:threadId/comments/:commentId", authMiddleware, deleteCommentById);

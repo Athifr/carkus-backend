@@ -13,8 +13,8 @@ app.use(express.json());
 app.use("/auth", auth);
 app.use("/campuses", campuses);
 app.use("/users", users);
-app.use("/threads", threads);
-app.use("/threads", comments);
+app.use("/campuses", threads);
+app.use("/campuses", comments);
 
 app.use((err, req, res, next) => {
   if (err instanceof ClientError) {
