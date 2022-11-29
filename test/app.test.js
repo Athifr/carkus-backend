@@ -90,6 +90,15 @@ describe("Integration Testing", function () {
           address: "Address 1",
           description: "Description 1",
           accreditation: "A",
+          status: "PTN",
+          faculties: {
+            name: "Faculty 1",
+            accreditation: "A",
+          },
+          links: {
+            instagram: "instagram.com",
+            website: "website.com",
+          },
           imageUrl: "https://picsum.photos/200",
         });
       expect(response.status).equals(201);
