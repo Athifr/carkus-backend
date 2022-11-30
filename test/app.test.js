@@ -68,18 +68,6 @@ describe("Integration Testing", function () {
     });
   });
 
-  // describe("GET /users/:username", function () {
-  //   it("should return 200", async function () {
-  //     const response = await request.get("/users/user123");
-  //     expect(response.status).equals(200);
-  //   });
-
-  //   it("should return 404", async function () {
-  //     const response = await request.get("/users/user1234");
-  //     expect(response.status).equals(404);
-  //   });
-  // });
-
   describe("POST /campus", function () {
     it("should return 201", async function () {
       const response = await request
@@ -90,6 +78,15 @@ describe("Integration Testing", function () {
           address: "Address 1",
           description: "Description 1",
           accreditation: "A",
+          status: "PTN",
+          faculties: {
+            name: "Faculty 1",
+            accreditation: "A",
+          },
+          links: {
+            instagram: "instagram.com",
+            website: "website.com",
+          },
           imageUrl: "https://picsum.photos/200",
         });
       expect(response.status).equals(201);
@@ -103,6 +100,15 @@ describe("Integration Testing", function () {
         address: "Address 1",
         description: "Description 1",
         accreditation: "A",
+        status: "PTN",
+        faculties: {
+          name: "Faculty 1",
+          accreditation: "A",
+        },
+        links: {
+          instagram: "instagram.com",
+          website: "website.com",
+        },
         imageUrl: "https://picsum.photos/200",
       });
       expect(response.status).equals(401);
@@ -124,6 +130,35 @@ describe("Integration Testing", function () {
 
     it("should return 404", async function () {
       const response = await request.get(`/campus/${Types.ObjectId}`);
+      expect(response.status).equals(404);
+    });
+  });
+
+  describe("PUT /campus/:campusId", function () {
+    it("should return 200", async function () {
+      const response = await request
+        .put(`/campus/${campusId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          status: "PTS",
+        });
+      expect(response.status).equals(200);
+    });
+
+    it("should return 401", async function () {
+      const response = await request.put(`/campus/${campusId}`).send({
+        status: "PTS",
+      });
+      expect(response.status).equals(401);
+    });
+
+    it("should return 404", async function () {
+      const response = await request
+        .put(`/campus/${Types.ObjectId}`)
+        .set("Authorization", `Bearer ${token}`)
+        .send({
+          status: "PTS",
+        });
       expect(response.status).equals(404);
     });
   });
@@ -297,6 +332,57 @@ describe("Integration Testing", function () {
         `/campus/${campusId}/threads/${threadId}/comments/${commentId}`
       );
       expect(response.status).equals(401);
+    });
+
+    it("should return 404", async function () {
+      const response = await request
+        .delete(`/campus/${campusId}/threads/${threadId}/comments/${commentId}`)
+        .set("Authorization", `Bearer ${token}`);
+      expect(response.status).equals(404);
+    });
+  });
+
+  describe("DELETE /campus/:campusId/threads/:threadId", function () {
+    it("should return 200", async function () {
+      const response = await request
+        .delete(`/campus/${campusId}/threads/${threadId}`)
+        .set("Authorization", `Bearer ${token}`);
+      expect(response.status).equals(200);
+    });
+
+    it("should return 401", async function () {
+      const response = await request.delete(
+        `/campus/${campusId}/threads/${threadId}`
+      );
+      expect(response.status).equals(401);
+    });
+
+    it("should return 404", async function () {
+      const response = await request.delete(
+        `/campus/${campusId}/threads/${Types.ObjectId}`
+      );
+      expect(response.status).equals(404);
+    });
+  });
+
+  describe("DELETE /campus/:campusId", function () {
+    it("should return 200", async function () {
+      const response = await request
+        .delete(`/campus/${campusId}`)
+        .set("Authorization", `Bearer ${token}`);
+      expect(response.status).equals(200);
+    });
+
+    it("should return 401", async function () {
+      const response = await request.delete(`/campus/${campusId}`);
+      expect(response.status).equals(401);
+    });
+
+    it("should return 404", async function () {
+      const response = await request
+        .delete(`/campus/${Types.ObjectId}`)
+        .set("Authorization", `Bearer ${token}`);
+      expect(response.status).equals(404);
     });
   });
 });
