@@ -1,18 +1,27 @@
 import AuthorizationError from "../commons/exceptions/AuthorizationError.js";
 import NotFoundError from "../commons/exceptions/NotFoundError.js";
-import { Thread } from "../models/Thread.js";
+import { Campus } from "../models/Campus.js";
 
 /** @type {import("express").RequestHandler} */
 export async function addThread(req, res, next) {
   try {
     const { userId } = res.locals.token;
     const { title, content } = req.body;
-    const thread = await Thread.create({
+    const { campusId } = req.params;
+
+    const campus = await Campus.findById(campusId);
+    if (!campus) {
+      throw new NotFoundError("Campus not found");
+    }
+
+    campus.threads.push({
       author: userId,
       title,
       content,
     });
-    res.status(201).json(thread);
+    await campus.save();
+
+    res.status(201).json(campus.threads.at(-1));
   } catch (err) {
     next(err);
   }
@@ -21,8 +30,13 @@ export async function addThread(req, res, next) {
 /** @type {import("express").RequestHandler} */
 export async function getThreads(req, res, next) {
   try {
-    const threads = await Thread.find();
-    res.status(200).json(threads);
+    const { campusId } = req.params;
+    const campus = await Campus.findById(campusId);
+    if (!campus) {
+      throw new NotFoundError("Campus not found");
+    }
+
+    res.status(200).json(campus.threads);
   } catch (err) {
     next(err);
   }
@@ -31,11 +45,17 @@ export async function getThreads(req, res, next) {
 /** @type {import("express").RequestHandler} */
 export async function getThreadById(req, res, next) {
   try {
-    const { threadId } = req.params;
-    const thread = await Thread.findById(threadId);
-    if (!thread) {
-      throw new NotFoundError("thread not found");
+    const { campusId, threadId } = req.params;
+    const campus = await Campus.findById(campusId);
+    if (!campus) {
+      throw new NotFoundError("Campus not found");
     }
+
+    const thread = campus.threads.id(threadId);
+    if (!thread) {
+      throw new NotFoundError("Comment not found");
+    }
+
     res.status(200).json(thread);
   } catch (err) {
     next(err);
@@ -46,16 +66,26 @@ export async function getThreadById(req, res, next) {
 export async function updateThreadById(req, res, next) {
   try {
     const { userId } = res.locals.token;
-    const { threadId } = req.params;
+    const { campusId, threadId } = req.params;
     const { title, content } = req.body;
-    const thread = await Thread.findById(threadId);
+
+    const campus = await Campus.findById(campusId);
+    if (!campus) {
+      throw new NotFoundError("Campus not found");
+    }
+
+    const thread = campus.threads.id(threadId);
     if (!thread) {
-      throw new NotFoundError("thread not found");
+      throw new NotFoundError("Thread not found");
     }
-    if (thread.author._id.toString() !== userId) {
-      throw new AuthorizationError("not authorized");
+
+    if (thread.author.toString() !== userId) {
+      throw new AuthorizationError("Restricted resource");
     }
-    await thread.updateOne({ title, content });
+
+    thread.title = title;
+    thread.content = content;
+    await campus.save();
     res.status(200).json({
       message: "success",
     });
@@ -68,15 +98,24 @@ export async function updateThreadById(req, res, next) {
 export async function deleteThreadById(req, res, next) {
   try {
     const { userId } = res.locals.token;
-    const { threadId } = req.params;
-    const thread = await Thread.findById(threadId);
+    const { campusId, threadId } = req.params;
+
+    const campus = await Campus.findById(campusId);
+    if (!campus) {
+      throw new NotFoundError("Campus not found");
+    }
+
+    const thread = campus.threads.id(threadId);
     if (!thread) {
-      throw new NotFoundError("thread not found");
+      throw new NotFoundError("Thread not found");
     }
-    if (thread.author._id.toString() !== userId) {
-      throw new AuthorizationError("not authorized");
+
+    if (thread.author.toString() !== userId) {
+      throw new AuthorizationError("Restricted resource");
     }
-    await Thread.findByIdAndDelete(threadId);
+
+    thread.remove();
+    await campus.save();
     res.status(200).json({
       message: "success",
     });

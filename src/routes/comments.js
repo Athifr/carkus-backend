@@ -8,11 +8,12 @@ import {
 } from "../controllers/comment.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 
-export const comments = Router();
+export const comments = Router({ mergeParams: true });
 
 comments
-  .get("/:threadId/comments", getComments)
-  .get("/:threadId/comments/:commentId", getCommentById)
-  .post("/:threadId/comments", authMiddleware, addComment)
-  .put("/:threadId/comments/:commentId", authMiddleware, updateCommentById)
-  .delete("/:threadId/comments/:commentId", authMiddleware, deleteCommentById);
+  .get("/", getComments)
+  .get("/:commentId", getCommentById)
+
+  .post("/", authMiddleware, addComment)
+  .put("/:commentId", authMiddleware, updateCommentById)
+  .delete("/:commentId", authMiddleware, deleteCommentById);
