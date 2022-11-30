@@ -8,6 +8,9 @@
 | POST   | /auth/register                                          | Register                      |                         |
 | GET    | /campus                                                 | Get all campuses              |                         |
 | GET    | /campus/:campusId                                       | Get a campus by id            |                         |
+| POST   | /campus                                                 | Create a campus               | Requires Authentication |
+| PUT    | /campus/:campusId                                       | Update a campus               | Requires Authentication |
+| DELETE | /campus/:campusId                                       | Delete a campus               | Requires Authentication |
 | GET    | /campus/:campusId/threads                               | Get all threads               |                         |
 | GET    | /campus/:campusId/threads/:threadId                     | Get a thread by id            |                         |
 | POST   | /campus/:campusId/threads                               | Create a thread               | Requires Authentication |
