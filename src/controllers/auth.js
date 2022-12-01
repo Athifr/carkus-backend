@@ -17,10 +17,11 @@ export async function login(req, res, next) {
     if (user.password !== passwordHash) {
       throw new AuthenticationError("Invalid password");
     }
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    const userId = user._id;
+    const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
-    res.status(200).json({ token });
+    res.status(200).json({ userId, token });
   } catch (err) {
     next(err);
   }
