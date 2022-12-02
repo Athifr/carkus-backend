@@ -14,7 +14,7 @@ export async function addThread(req, res, next) {
       throw new NotFoundError("Campus not found");
     }
 
-    campus.threads.push({
+    campus.threads.unshift({
       author: userId,
       title,
       content,
