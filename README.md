@@ -26,8 +26,8 @@
 
 ## Environment Variables
 
-| Name        | Description               |
-| ----------- | ------------------------- |
-| PORT        | Server Port               |
-| JWT_SECRET  | JWT Secret                |
-| MONGODB_URI | MongoDB Connection String |
+| Name       | Description               |
+| ---------- | ------------------------- |
+| PORT       | Server Port               |
+| JWT_SECRET | JWT Secret                |
+| MONGO_URL  | MongoDB Connection String |
